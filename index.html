@@ -176,65 +176,38 @@
 
         <div class="detail-row">
           <span class="label">PO Number</span>
-          <span
-            id="poDisplay"
-            class="value"
-          ></span>
+          <span id="poDisplay" class="value"></span>
         </div>
 
         <div class="detail-row">
           <span class="label">Technician</span>
-          <span
-            id="techDisplay"
-            class="value"
-          ></span>
+          <span id="techDisplay" class="value"></span>
         </div>
 
         <div class="detail-row">
           <span class="label">Vendor</span>
-          <span
-            id="vendorDisplay"
-            class="value"
-          ></span>
+          <span id="vendorDisplay" class="value"></span>
         </div>
 
         <div class="detail-row">
           <span class="label">Category</span>
-          <span
-            id="categoryDisplay"
-            class="value"
-          ></span>
+          <span id="categoryDisplay" class="value"></span>
         </div>
 
-        <div
-          id="jobRow"
-          class="detail-row"
-        >
+        <div id="jobRow" class="detail-row">
           <span class="label">Job #</span>
-          <span
-            id="jobDisplay"
-            class="value"
-          ></span>
+          <span id="jobDisplay" class="value"></span>
         </div>
 
-        <div
-          id="customerRow"
-          class="detail-row"
-        >
+        <div id="customerRow" class="detail-row">
           <span class="label">Customer / Job</span>
-          <span
-            id="customerDisplay"
-            class="value"
-          ></span>
+          <span id="customerDisplay" class="value"></span>
         </div>
 
       </div>
 
 
-      <div
-        id="formSection"
-        class="form-section"
-      >
+      <div id="formSection" class="form-section">
 
         <div class="field">
 
@@ -282,20 +255,12 @@
       </div>
 
 
-      <div
-        id="message"
-        class="message"
-      ></div>
+      <div id="message" class="message"></div>
 
     </div>
 
   </div>
 
-
-  <!--
-    Hidden form used to send the receipt to Apps Script
-    without requiring cross-origin fetch access.
-  -->
 
   <form
     id="receiptForm"
@@ -304,41 +269,12 @@
     style="display:none;"
   >
 
-    <input
-      type="hidden"
-      name="book"
-      id="formBook"
-    >
-
-    <input
-      type="hidden"
-      name="po"
-      id="formPo"
-    >
-
-    <input
-      type="hidden"
-      name="amount"
-      id="formAmount"
-    >
-
-    <input
-      type="hidden"
-      name="fileName"
-      id="formFileName"
-    >
-
-    <input
-      type="hidden"
-      name="mimeType"
-      id="formMimeType"
-    >
-
-    <input
-      type="hidden"
-      name="fileData"
-      id="formFileData"
-    >
+    <input type="hidden" name="book" id="formBook">
+    <input type="hidden" name="po" id="formPo">
+    <input type="hidden" name="amount" id="formAmount">
+    <input type="hidden" name="fileName" id="formFileName">
+    <input type="hidden" name="mimeType" id="formMimeType">
+    <input type="hidden" name="fileData" id="formFileData">
 
   </form>
 
@@ -391,8 +327,11 @@
 
 
     /*
-     * Result returned by the Apps Script
-     * JSONP purchase lookup.
+     * Purchase lookup result.
+     *
+     * IMPORTANT:
+     * Apps Script returns "hasReceipt",
+     * not "receiptExists".
      */
     window.receiptLookup =
       function(result) {
@@ -492,7 +431,7 @@
           'block';
 
 
-        if (purchase.receiptExists) {
+        if (purchase.hasReceipt) {
 
           statusBox.textContent =
             'Purchase found. A receipt has already been submitted for this PO.';
@@ -509,9 +448,6 @@
       };
 
 
-    /*
-     * Load the PO information using JSONP.
-     */
     function loadPurchase() {
 
       if (
@@ -537,7 +473,9 @@
         '&book=' +
         encodeURIComponent(bookId) +
         '&po=' +
-        encodeURIComponent(po);
+        encodeURIComponent(po) +
+        '&t=' +
+        Date.now();
 
 
       script.onerror =
@@ -556,10 +494,6 @@
     }
 
 
-    /*
-     * Convert the selected receipt to base64
-     * and submit it through the hidden form.
-     */
     function prepareReceipt() {
 
       hideMessage();
@@ -682,10 +616,9 @@
 
 
             const form =
-              document
-                .getElementById(
-                  'receiptForm'
-                );
+              document.getElementById(
+                'receiptForm'
+              );
 
 
             form.action =
@@ -701,14 +634,11 @@
             );
 
 
-            /*
-             * Start checking after 4 seconds.
-             * If Apps Script / Sheets is still
-             * processing, verification will retry.
-             */
             setTimeout(
               function() {
+
                 verifySubmission(1);
+
               },
               4000
             );
@@ -753,13 +683,8 @@
 
 
     /*
-     * Re-check the PO after submission.
-     *
-     * Apps Script may finish the upload before
-     * the updated receipt status is visible to
-     * the lookup request. Retry several times
-     * before treating the submission as
-     * unconfirmed.
+     * Verify that Apps Script now reports
+     * hasReceipt = true.
      */
     function verifySubmission(attempt) {
 
@@ -783,7 +708,7 @@
               result &&
               result.success &&
               result.purchase &&
-              result.purchase.receiptExists
+              result.purchase.hasReceipt
             ) {
 
               statusBox.textContent =
