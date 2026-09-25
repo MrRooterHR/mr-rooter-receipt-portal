@@ -2,13 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>PO Receipt Machine</title>
+  <title>Mr. Rooter Receipt Portal</title>
 
   <style>
     * {
@@ -18,69 +14,136 @@
     body {
       margin: 0;
       padding: 20px;
+      background: #f3f5f7;
       font-family: Arial, Helvetica, sans-serif;
-      background: #f4f5f7;
-      color: #202124;
+      color: #1f2933;
     }
 
     .container {
       max-width: 520px;
-      margin: 30px auto;
+      margin: 0 auto;
     }
 
     .card {
       background: white;
-      border-radius: 14px;
+      border-radius: 12px;
       padding: 24px;
-      box-shadow: 0 2px 10px rgba(0,0,0,.08);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
     }
 
     h1 {
       margin-top: 0;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       font-size: 26px;
+      text-align: center;
     }
 
     .subtitle {
-      margin-top: 0;
+      text-align: center;
+      color: #667085;
       margin-bottom: 24px;
-      color: #666;
     }
 
     .status {
-      padding: 16px;
-      border-radius: 10px;
-      background: #f1f3f4;
-      line-height: 1.5;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      background: #eef2f6;
+      text-align: center;
+      font-weight: bold;
     }
 
-    .success {
-      background: #e6f4ea;
+    .details {
+      margin-bottom: 24px;
     }
 
-    .error {
-      background: #fce8e6;
-    }
-
-    .purchase {
-      margin-top: 20px;
-    }
-
-    .row {
+    .detail-row {
       padding: 10px 0;
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid #e5e7eb;
     }
 
     .label {
       display: block;
-      font-size: 13px;
-      color: #666;
+      font-size: 12px;
+      font-weight: bold;
+      color: #667085;
+      text-transform: uppercase;
       margin-bottom: 3px;
     }
 
     .value {
+      font-size: 16px;
+      word-break: break-word;
+    }
+
+    .form-section {
+      display: none;
+    }
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
       font-weight: bold;
-      overflow-wrap: anywhere;
+      margin-bottom: 7px;
+    }
+
+    input[type="number"],
+    input[type="file"] {
+      width: 100%;
+      font-size: 16px;
+    }
+
+    input[type="number"] {
+      padding: 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+    }
+
+    input[type="file"] {
+      padding: 10px 0;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+      background: #1f4e79;
+      color: white;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .message {
+      display: none;
+      margin-top: 18px;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .success {
+      background: #e8f5e9;
+      color: #256029;
+    }
+
+    .error {
+      background: #fdecec;
+      color: #b42318;
+    }
+
+    .hidden-frame {
+      display: none;
     }
   </style>
 </head>
@@ -93,9 +156,9 @@
 
       <h1>Submit Purchase Receipt</h1>
 
-      <p class="subtitle">
-        Mr. Rooter Plumbing — PO Receipt Machine
-      </p>
+      <div class="subtitle">
+        Mr. Rooter Plumbing
+      </div>
 
       <div
         id="status"
@@ -104,53 +167,193 @@
         Looking up purchase...
       </div>
 
+
       <div
-        id="purchase"
-        class="purchase"
-        hidden
+        id="details"
+        class="details"
+        style="display:none;"
       >
 
-        <div class="row">
-          <span class="label">PO</span>
-          <span id="poValue" class="value"></span>
+        <div class="detail-row">
+          <span class="label">PO Number</span>
+          <span
+            id="poDisplay"
+            class="value"
+          ></span>
         </div>
 
-        <div class="row">
+        <div class="detail-row">
           <span class="label">Technician</span>
-          <span id="technician" class="value"></span>
+          <span
+            id="techDisplay"
+            class="value"
+          ></span>
         </div>
 
-        <div class="row">
+        <div class="detail-row">
           <span class="label">Vendor</span>
-          <span id="vendor" class="value"></span>
+          <span
+            id="vendorDisplay"
+            class="value"
+          ></span>
         </div>
 
-        <div class="row">
+        <div class="detail-row">
           <span class="label">Category</span>
-          <span id="category" class="value"></span>
+          <span
+            id="categoryDisplay"
+            class="value"
+          ></span>
         </div>
 
-        <div class="row">
+        <div
+          id="jobRow"
+          class="detail-row"
+        >
           <span class="label">Job #</span>
-          <span id="jobNumber" class="value"></span>
+          <span
+            id="jobDisplay"
+            class="value"
+          ></span>
         </div>
 
-        <div class="row">
+        <div
+          id="customerRow"
+          class="detail-row"
+        >
           <span class="label">Customer / Job</span>
-          <span id="customerJob" class="value"></span>
+          <span
+            id="customerDisplay"
+            class="value"
+          ></span>
         </div>
 
       </div>
+
+
+      <div
+        id="formSection"
+        class="form-section"
+      >
+
+        <div class="field">
+
+          <label for="amount">
+            Final Amount Spent
+          </label>
+
+          <input
+            type="number"
+            id="amount"
+            min="0"
+            step="0.01"
+            inputmode="decimal"
+            placeholder="0.00"
+            required
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="receipt">
+            Receipt
+          </label>
+
+          <input
+            type="file"
+            id="receipt"
+            accept="image/*,application/pdf"
+            required
+          >
+
+        </div>
+
+
+        <button
+          id="submitButton"
+          type="button"
+          onclick="prepareReceipt()"
+        >
+          Submit Receipt
+        </button>
+
+      </div>
+
+
+      <div
+        id="message"
+        class="message"
+      ></div>
 
     </div>
 
   </div>
 
 
+  <!--
+    Hidden form used to send the receipt to Apps Script
+    without requiring cross-origin fetch access.
+  -->
+
+  <form
+    id="receiptForm"
+    method="POST"
+    target="receiptFrame"
+    style="display:none;"
+  >
+
+    <input
+      type="hidden"
+      name="book"
+      id="formBook"
+    >
+
+    <input
+      type="hidden"
+      name="po"
+      id="formPo"
+    >
+
+    <input
+      type="hidden"
+      name="amount"
+      id="formAmount"
+    >
+
+    <input
+      type="hidden"
+      name="fileName"
+      id="formFileName"
+    >
+
+    <input
+      type="hidden"
+      name="mimeType"
+      id="formMimeType"
+    >
+
+    <input
+      type="hidden"
+      name="fileData"
+      id="formFileData"
+    >
+
+  </form>
+
+
+  <iframe
+    name="receiptFrame"
+    id="receiptFrame"
+    class="hidden-frame"
+  ></iframe>
+
+
   <script>
 
     const BACKEND =
-      "https://script.google.com/macros/s/AKfycbwPTH0fqVAeAUJWRpv70UhpagdYhx2ZKIXE_UbZXB2GVcmfjgkxUMNN7qjGUH328C0/exec";
+      'https://script.google.com/macros/s/AKfycbwPTH0fqVAeAUJWRpv70UhpagdYhx2ZKIXE_UbZXB2GVcmfjgkxUMNN7qjGUH328C0/exec';
 
 
     const params =
@@ -159,146 +362,189 @@
       );
 
 
-    const book =
-      (params.get("book") || "").trim();
+    const bookId =
+      params.get('book') || '';
 
 
     const po =
-      (params.get("po") || "")
-        .trim()
-        .toUpperCase();
+      params.get('po') || '';
 
 
-    const status =
-      document.getElementById("status");
+    const statusBox =
+      document.getElementById('status');
 
 
-    const purchase =
-      document.getElementById("purchase");
+    const details =
+      document.getElementById('details');
 
 
-    if (!book || !po) {
-
-      showError(
-        "Receipt link incomplete. Please use the receipt link provided with your approved PO."
-      );
-
-    }
-
-    else {
-
-      loadPurchase();
-
-    }
+    const formSection =
+      document.getElementById('formSection');
 
 
+    const message =
+      document.getElementById('message');
+
+
+    const submitButton =
+      document.getElementById('submitButton');
+
+
+    /*
+     * Result returned by the Apps Script
+     * JSONP purchase lookup.
+     */
+    window.receiptLookup =
+      function(result) {
+
+        if (
+          !result ||
+          !result.success
+        ) {
+
+          statusBox.textContent =
+            result &&
+            result.message
+              ? result.message
+              : 'Purchase could not be found.';
+
+          return;
+        }
+
+
+        const purchase =
+          result.purchase;
+
+
+        document
+          .getElementById('poDisplay')
+          .textContent =
+            purchase.po || po;
+
+
+        document
+          .getElementById('techDisplay')
+          .textContent =
+            purchase.technician || '';
+
+
+        document
+          .getElementById('vendorDisplay')
+          .textContent =
+            purchase.vendor || '';
+
+
+        document
+          .getElementById('categoryDisplay')
+          .textContent =
+            purchase.category || '';
+
+
+        const jobNumber =
+          purchase.jobNumber ||
+          purchase.job ||
+          '';
+
+
+        const customer =
+          purchase.customerJob ||
+          purchase.customer ||
+          '';
+
+
+        document
+          .getElementById('jobDisplay')
+          .textContent =
+            jobNumber;
+
+
+        document
+          .getElementById('customerDisplay')
+          .textContent =
+            customer;
+
+
+        if (!jobNumber) {
+
+          document
+            .getElementById('jobRow')
+            .style.display =
+              'none';
+
+        }
+
+
+        if (!customer) {
+
+          document
+            .getElementById('customerRow')
+            .style.display =
+              'none';
+
+        }
+
+
+        details.style.display =
+          'block';
+
+
+        formSection.style.display =
+          'block';
+
+
+        if (purchase.receiptExists) {
+
+          statusBox.textContent =
+            'Purchase found. A receipt has already been submitted for this PO.';
+
+        }
+
+        else {
+
+          statusBox.textContent =
+            'Purchase found. Ready for receipt submission.';
+
+        }
+
+      };
+
+
+    /*
+     * Load the PO information using JSONP.
+     */
     function loadPurchase() {
 
-      /*
-       * JSONP lets the public GitHub page read
-       * the Apps Script response without depending
-       * on cross-origin fetch permissions.
-       */
+      if (
+        !bookId ||
+        !po
+      ) {
 
-      window.receiptLookup =
-        function(result) {
+        statusBox.textContent =
+          'This receipt link is incomplete.';
 
-          delete window.receiptLookup;
-
-          if (
-            !result ||
-            !result.success
-          ) {
-
-            showError(
-              result && result.message
-                ? result.message
-                : "The purchase could not be loaded."
-            );
-
-            return;
-          }
-
-
-          const info =
-            result.purchase;
-
-
-          document
-            .getElementById("poValue")
-            .textContent =
-              info.po || "";
-
-
-          document
-            .getElementById("technician")
-            .textContent =
-              info.technician || "—";
-
-
-          document
-            .getElementById("vendor")
-            .textContent =
-              info.vendor || "—";
-
-
-          document
-            .getElementById("category")
-            .textContent =
-              info.category || "—";
-
-
-          document
-            .getElementById("jobNumber")
-            .textContent =
-              info.jobNumber || "—";
-
-
-          document
-            .getElementById("customerJob")
-            .textContent =
-              info.customerJob || "—";
-
-
-          status.classList.add(
-            "success"
-          );
-
-
-          status.textContent =
-            info.hasReceipt
-              ? "Purchase found. A receipt has already been submitted for this PO."
-              : "Purchase found. Ready for receipt submission.";
-
-
-          purchase.hidden =
-            false;
-
-        };
+        return;
+      }
 
 
       const script =
-        document.createElement(
-          "script"
-        );
+        document.createElement('script');
 
 
       script.src =
         BACKEND +
-        "?action=lookup" +
-        "&callback=receiptLookup" +
-        "&book=" +
-        encodeURIComponent(book) +
-        "&po=" +
+        '?action=lookup' +
+        '&callback=receiptLookup' +
+        '&book=' +
+        encodeURIComponent(bookId) +
+        '&po=' +
         encodeURIComponent(po);
 
 
       script.onerror =
         function() {
 
-          showError(
-            "The Receipt Machine could not be reached. Please try again."
-          );
+          statusBox.textContent =
+            'The purchase information could not be loaded.';
 
         };
 
@@ -310,16 +556,340 @@
     }
 
 
-    function showError(message) {
+    /*
+     * Convert the selected receipt to base64
+     * and submit it through the hidden form.
+     */
+    function prepareReceipt() {
 
-      status.classList.add(
-        "error"
+      hideMessage();
+
+
+      const amount =
+        document
+          .getElementById('amount')
+          .value
+          .trim();
+
+
+      const fileInput =
+        document
+          .getElementById('receipt');
+
+
+      const file =
+        fileInput.files[0];
+
+
+      if (!amount) {
+
+        showMessage(
+          'Enter the final amount spent.',
+          false
+        );
+
+        return;
+      }
+
+
+      if (!file) {
+
+        showMessage(
+          'Select or photograph the receipt.',
+          false
+        );
+
+        return;
+      }
+
+
+      submitButton.disabled =
+        true;
+
+
+      submitButton.textContent =
+        'Submitting Receipt...';
+
+
+      const reader =
+        new FileReader();
+
+
+      reader.onload =
+        function(event) {
+
+          try {
+
+            const dataUrl =
+              event.target.result;
+
+
+            const comma =
+              dataUrl.indexOf(',');
+
+
+            if (comma === -1) {
+
+              throw new Error(
+                'The receipt file could not be prepared.'
+              );
+
+            }
+
+
+            const base64 =
+              dataUrl.substring(
+                comma + 1
+              );
+
+
+            document
+              .getElementById('formBook')
+              .value =
+                bookId;
+
+
+            document
+              .getElementById('formPo')
+              .value =
+                po;
+
+
+            document
+              .getElementById('formAmount')
+              .value =
+                amount;
+
+
+            document
+              .getElementById('formFileName')
+              .value =
+                file.name ||
+                'Receipt';
+
+
+            document
+              .getElementById('formMimeType')
+              .value =
+                file.type ||
+                'application/octet-stream';
+
+
+            document
+              .getElementById('formFileData')
+              .value =
+                base64;
+
+
+            const form =
+              document
+                .getElementById(
+                  'receiptForm'
+                );
+
+
+            form.action =
+              BACKEND;
+
+
+            form.submit();
+
+
+            showMessage(
+              'Receipt sent. Finishing submission...',
+              true
+            );
+
+
+            /*
+             * For this first transport test,
+             * give Apps Script time to process,
+             * then re-check the PO through
+             * the working lookup API.
+             */
+            setTimeout(
+              verifySubmission,
+              4000
+            );
+
+          }
+
+          catch (error) {
+
+            resetSubmitButton();
+
+
+            showMessage(
+              error.message ||
+              'The receipt could not be prepared.',
+              false
+            );
+
+          }
+
+        };
+
+
+      reader.onerror =
+        function() {
+
+          resetSubmitButton();
+
+
+          showMessage(
+            'The receipt file could not be read.',
+            false
+          );
+
+        };
+
+
+      reader.readAsDataURL(
+        file
       );
 
-      status.textContent =
-        message;
+    }
+
+
+    /*
+     * Re-check the PO after submission.
+     * This avoids needing to read the
+     * cross-origin POST response.
+     */
+    function verifySubmission() {
+
+      const callbackName =
+        'receiptVerify_' +
+        Date.now();
+
+
+      window[callbackName] =
+        function(result) {
+
+          try {
+
+            if (
+              result &&
+              result.success &&
+              result.purchase &&
+              result.purchase.receiptExists
+            ) {
+
+              statusBox.textContent =
+                'Receipt received.';
+
+
+              formSection.style.display =
+                'none';
+
+
+              showMessage(
+                'Receipt submitted successfully.',
+                true
+              );
+
+            }
+
+            else {
+
+              resetSubmitButton();
+
+
+              showMessage(
+                'The receipt has not been confirmed yet. Please wait a moment before trying again.',
+                false
+              );
+
+            }
+
+          }
+
+          finally {
+
+            delete window[
+              callbackName
+            ];
+
+          }
+
+        };
+
+
+      const script =
+        document.createElement('script');
+
+
+      script.src =
+        BACKEND +
+        '?action=lookup' +
+        '&callback=' +
+        encodeURIComponent(
+          callbackName
+        ) +
+        '&book=' +
+        encodeURIComponent(
+          bookId
+        ) +
+        '&po=' +
+        encodeURIComponent(
+          po
+        ) +
+        '&t=' +
+        Date.now();
+
+
+      document.body.appendChild(
+        script
+      );
 
     }
+
+
+    function resetSubmitButton() {
+
+      submitButton.disabled =
+        false;
+
+
+      submitButton.textContent =
+        'Submit Receipt';
+
+    }
+
+
+    function showMessage(
+      text,
+      success
+    ) {
+
+      message.textContent =
+        text;
+
+
+      message.className =
+        'message ' +
+        (
+          success
+            ? 'success'
+            : 'error'
+        );
+
+
+      message.style.display =
+        'block';
+
+    }
+
+
+    function hideMessage() {
+
+      message.style.display =
+        'none';
+
+    }
+
+
+    loadPurchase();
 
   </script>
 
