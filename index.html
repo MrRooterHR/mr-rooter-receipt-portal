@@ -1,164 +1,302 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Mr. Rooter Receipt Portal</title>
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    Mr. Rooter Receipt Portal
+  </title>
+
 
   <style>
+
     * {
       box-sizing: border-box;
     }
 
+
     body {
+
       margin: 0;
       padding: 20px;
+
       background: #f3f5f7;
-      font-family: Arial, Helvetica, sans-serif;
+
+      font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
       color: #1f2933;
+
     }
+
 
     .container {
+
       max-width: 520px;
+
       margin: 0 auto;
+
     }
+
 
     .card {
+
       background: white;
+
       border-radius: 12px;
+
       padding: 24px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+
+      box-shadow:
+        0 2px 10px
+        rgba(0, 0, 0, 0.08);
+
     }
+
 
     h1 {
+
       margin-top: 0;
+
       margin-bottom: 6px;
+
       font-size: 26px;
+
       text-align: center;
+
     }
+
 
     .subtitle {
+
       text-align: center;
+
       color: #667085;
+
       margin-bottom: 24px;
+
     }
+
 
     .status {
+
       padding: 12px;
+
       border-radius: 8px;
+
       margin-bottom: 20px;
+
       background: #eef2f6;
+
       text-align: center;
+
       font-weight: bold;
+
     }
+
 
     .details {
+
       margin-bottom: 24px;
+
     }
+
 
     .detail-row {
+
       padding: 10px 0;
-      border-bottom: 1px solid #e5e7eb;
+
+      border-bottom:
+        1px solid #e5e7eb;
+
     }
+
 
     .label {
+
       display: block;
+
       font-size: 12px;
+
       font-weight: bold;
+
       color: #667085;
+
       text-transform: uppercase;
+
       margin-bottom: 3px;
+
     }
+
 
     .value {
+
       font-size: 16px;
+
       word-break: break-word;
+
     }
+
 
     .form-section {
+
       display: none;
+
     }
+
 
     .field {
+
       margin-bottom: 20px;
+
     }
 
+
     label {
+
       display: block;
+
       font-weight: bold;
+
       margin-bottom: 7px;
+
     }
+
 
     input[type="number"],
     input[type="file"] {
+
       width: 100%;
+
       font-size: 16px;
+
     }
+
 
     input[type="number"] {
+
       padding: 12px;
-      border: 1px solid #cbd5e1;
+
+      border:
+        1px solid #cbd5e1;
+
       border-radius: 8px;
+
     }
+
 
     input[type="file"] {
+
       padding: 10px 0;
+
     }
+
 
     button {
+
       width: 100%;
+
       padding: 14px;
+
       border: none;
+
       border-radius: 8px;
+
       font-size: 17px;
+
       font-weight: bold;
+
       cursor: pointer;
+
       background: #1f4e79;
+
       color: white;
+
     }
+
 
     button:disabled {
+
       opacity: 0.6;
+
       cursor: not-allowed;
+
     }
+
 
     .message {
+
       display: none;
+
       margin-top: 18px;
+
       padding: 12px;
+
       border-radius: 8px;
+
       text-align: center;
+
       font-weight: bold;
+
     }
+
 
     .success {
+
       background: #e8f5e9;
+
       color: #256029;
+
     }
+
 
     .error {
+
       background: #fdecec;
+
       color: #b42318;
+
     }
 
+
     .hidden-frame {
+
       display: none;
+
     }
+
   </style>
+
 </head>
+
 
 <body>
 
+
   <div class="container">
+
 
     <div class="card">
 
-      <h1>Submit Purchase Receipt</h1>
+
+      <h1>
+        Submit Purchase Receipt
+      </h1>
+
 
       <div class="subtitle">
         Mr. Rooter Plumbing
       </div>
+
 
       <div
         id="status"
@@ -168,46 +306,113 @@
       </div>
 
 
+
       <div
         id="details"
         class="details"
         style="display:none;"
       >
 
-        <div class="detail-row">
-          <span class="label">PO Number</span>
-          <span id="poDisplay" class="value"></span>
-        </div>
 
         <div class="detail-row">
-          <span class="label">Technician</span>
-          <span id="techDisplay" class="value"></span>
+
+          <span class="label">
+            PO Number
+          </span>
+
+          <span
+            id="poDisplay"
+            class="value"
+          ></span>
+
         </div>
+
 
         <div class="detail-row">
-          <span class="label">Vendor</span>
-          <span id="vendorDisplay" class="value"></span>
+
+          <span class="label">
+            Technician
+          </span>
+
+          <span
+            id="techDisplay"
+            class="value"
+          ></span>
+
         </div>
+
 
         <div class="detail-row">
-          <span class="label">Category</span>
-          <span id="categoryDisplay" class="value"></span>
+
+          <span class="label">
+            Vendor
+          </span>
+
+          <span
+            id="vendorDisplay"
+            class="value"
+          ></span>
+
         </div>
 
-        <div id="jobRow" class="detail-row">
-          <span class="label">Job #</span>
-          <span id="jobDisplay" class="value"></span>
+
+        <div class="detail-row">
+
+          <span class="label">
+            Category
+          </span>
+
+          <span
+            id="categoryDisplay"
+            class="value"
+          ></span>
+
         </div>
 
-        <div id="customerRow" class="detail-row">
-          <span class="label">Customer / Job</span>
-          <span id="customerDisplay" class="value"></span>
+
+        <div
+          id="jobRow"
+          class="detail-row"
+        >
+
+          <span class="label">
+            Job #
+          </span>
+
+          <span
+            id="jobDisplay"
+            class="value"
+          ></span>
+
         </div>
+
+
+        <div
+          id="customerRow"
+          class="detail-row"
+        >
+
+          <span class="label">
+            Customer / Job
+          </span>
+
+          <span
+            id="customerDisplay"
+            class="value"
+          ></span>
+
+        </div>
+
 
       </div>
 
 
-      <div id="formSection" class="form-section">
+
+      <div
+        id="formSection"
+        class="form-section"
+      >
+
 
         <div class="field">
 
@@ -252,15 +457,31 @@
           Submit Receipt
         </button>
 
+
       </div>
 
 
-      <div id="message" class="message"></div>
+
+      <div
+        id="message"
+        class="message"
+      ></div>
+
 
     </div>
 
+
   </div>
 
+
+
+  <!--
+    Hidden form used to submit the receipt
+    to Apps Script.
+
+    The Apps Script response loads inside
+    the hidden iframe below.
+  -->
 
   <form
     id="receiptForm"
@@ -269,14 +490,44 @@
     style="display:none;"
   >
 
-    <input type="hidden" name="book" id="formBook">
-    <input type="hidden" name="po" id="formPo">
-    <input type="hidden" name="amount" id="formAmount">
-    <input type="hidden" name="fileName" id="formFileName">
-    <input type="hidden" name="mimeType" id="formMimeType">
-    <input type="hidden" name="fileData" id="formFileData">
+    <input
+      type="hidden"
+      name="book"
+      id="formBook"
+    >
+
+    <input
+      type="hidden"
+      name="po"
+      id="formPo"
+    >
+
+    <input
+      type="hidden"
+      name="amount"
+      id="formAmount"
+    >
+
+    <input
+      type="hidden"
+      name="fileName"
+      id="formFileName"
+    >
+
+    <input
+      type="hidden"
+      name="mimeType"
+      id="formMimeType"
+    >
+
+    <input
+      type="hidden"
+      name="fileData"
+      id="formFileData"
+    >
 
   </form>
+
 
 
   <iframe
@@ -286,10 +537,13 @@
   ></iframe>
 
 
+
   <script>
+
 
     const BACKEND =
       'https://script.google.com/macros/s/AKfycbwPTH0fqVAeAUJWRpv70UhpagdYhx2ZKIXE_UbZXB2GVcmfjgkxUMNN7qjGUH328C0/exec';
+
 
 
     const params =
@@ -298,43 +552,63 @@
       );
 
 
+
     const bookId =
       params.get('book') || '';
+
 
 
     const po =
       params.get('po') || '';
 
 
+
     const statusBox =
-      document.getElementById('status');
+      document.getElementById(
+        'status'
+      );
+
 
 
     const details =
-      document.getElementById('details');
+      document.getElementById(
+        'details'
+      );
+
 
 
     const formSection =
-      document.getElementById('formSection');
+      document.getElementById(
+        'formSection'
+      );
+
 
 
     const message =
-      document.getElementById('message');
+      document.getElementById(
+        'message'
+      );
+
 
 
     const submitButton =
-      document.getElementById('submitButton');
+      document.getElementById(
+        'submitButton'
+      );
+
+
+
+    let submissionInProgress =
+      false;
+
 
 
     /*
-     * Purchase lookup result.
-     *
-     * IMPORTANT:
-     * Apps Script returns "hasReceipt",
-     * not "receiptExists".
+     * Initial purchase lookup.
      */
     window.receiptLookup =
       function(result) {
+
 
         if (
           !result ||
@@ -348,35 +622,54 @@
               : 'Purchase could not be found.';
 
           return;
+
         }
+
 
 
         const purchase =
           result.purchase;
 
 
-        document
-          .getElementById('poDisplay')
-          .textContent =
-            purchase.po || po;
-
 
         document
-          .getElementById('techDisplay')
+          .getElementById(
+            'poDisplay'
+          )
           .textContent =
-            purchase.technician || '';
+            purchase.po ||
+            po;
 
-
-        document
-          .getElementById('vendorDisplay')
-          .textContent =
-            purchase.vendor || '';
 
 
         document
-          .getElementById('categoryDisplay')
+          .getElementById(
+            'techDisplay'
+          )
           .textContent =
-            purchase.category || '';
+            purchase.technician ||
+            '';
+
+
+
+        document
+          .getElementById(
+            'vendorDisplay'
+          )
+          .textContent =
+            purchase.vendor ||
+            '';
+
+
+
+        document
+          .getElementById(
+            'categoryDisplay'
+          )
+          .textContent =
+            purchase.category ||
+            '';
+
 
 
         const jobNumber =
@@ -385,53 +678,71 @@
           '';
 
 
+
         const customer =
           purchase.customerJob ||
           purchase.customer ||
           '';
 
 
+
         document
-          .getElementById('jobDisplay')
+          .getElementById(
+            'jobDisplay'
+          )
           .textContent =
             jobNumber;
 
 
+
         document
-          .getElementById('customerDisplay')
+          .getElementById(
+            'customerDisplay'
+          )
           .textContent =
             customer;
+
 
 
         if (!jobNumber) {
 
           document
-            .getElementById('jobRow')
+            .getElementById(
+              'jobRow'
+            )
             .style.display =
               'none';
 
         }
+
 
 
         if (!customer) {
 
           document
-            .getElementById('customerRow')
+            .getElementById(
+              'customerRow'
+            )
             .style.display =
               'none';
 
         }
+
 
 
         details.style.display =
           'block';
 
 
+
         formSection.style.display =
           'block';
 
 
-        if (purchase.hasReceipt) {
+
+        if (
+          purchase.hasReceipt
+        ) {
 
           statusBox.textContent =
             'Purchase found. A receipt has already been submitted for this PO.';
@@ -445,10 +756,17 @@
 
         }
 
+
       };
 
 
+
+    /*
+     * Load purchase information through
+     * the working JSONP lookup API.
+     */
     function loadPurchase() {
+
 
       if (
         !bookId ||
@@ -459,337 +777,22 @@
           'This receipt link is incomplete.';
 
         return;
+
       }
 
 
+
       const script =
-        document.createElement('script');
+        document.createElement(
+          'script'
+        );
+
 
 
       script.src =
         BACKEND +
         '?action=lookup' +
         '&callback=receiptLookup' +
-        '&book=' +
-        encodeURIComponent(bookId) +
-        '&po=' +
-        encodeURIComponent(po) +
-        '&t=' +
-        Date.now();
-
-
-      script.onerror =
-        function() {
-
-          statusBox.textContent =
-            'The purchase information could not be loaded.';
-
-        };
-
-
-      document.body.appendChild(
-        script
-      );
-
-    }
-
-
-    function prepareReceipt() {
-
-      hideMessage();
-
-
-      const amount =
-        document
-          .getElementById('amount')
-          .value
-          .trim();
-
-
-      const fileInput =
-        document
-          .getElementById('receipt');
-
-
-      const file =
-        fileInput.files[0];
-
-
-      if (!amount) {
-
-        showMessage(
-          'Enter the final amount spent.',
-          false
-        );
-
-        return;
-      }
-
-
-      if (!file) {
-
-        showMessage(
-          'Select or photograph the receipt.',
-          false
-        );
-
-        return;
-      }
-
-
-      submitButton.disabled =
-        true;
-
-
-      submitButton.textContent =
-        'Submitting Receipt...';
-
-
-      const reader =
-        new FileReader();
-
-
-      reader.onload =
-        function(event) {
-
-          try {
-
-            const dataUrl =
-              event.target.result;
-
-
-            const comma =
-              dataUrl.indexOf(',');
-
-
-            if (comma === -1) {
-
-              throw new Error(
-                'The receipt file could not be prepared.'
-              );
-
-            }
-
-
-            const base64 =
-              dataUrl.substring(
-                comma + 1
-              );
-
-
-            document
-              .getElementById('formBook')
-              .value =
-                bookId;
-
-
-            document
-              .getElementById('formPo')
-              .value =
-                po;
-
-
-            document
-              .getElementById('formAmount')
-              .value =
-                amount;
-
-
-            document
-              .getElementById('formFileName')
-              .value =
-                file.name ||
-                'Receipt';
-
-
-            document
-              .getElementById('formMimeType')
-              .value =
-                file.type ||
-                'application/octet-stream';
-
-
-            document
-              .getElementById('formFileData')
-              .value =
-                base64;
-
-
-            const form =
-              document.getElementById(
-                'receiptForm'
-              );
-
-
-            form.action =
-              BACKEND;
-
-
-            form.submit();
-
-
-            showMessage(
-              'Receipt sent. Finishing submission...',
-              true
-            );
-
-
-            setTimeout(
-              function() {
-
-                verifySubmission(1);
-
-              },
-              4000
-            );
-
-          }
-
-          catch (error) {
-
-            resetSubmitButton();
-
-
-            showMessage(
-              error.message ||
-              'The receipt could not be prepared.',
-              false
-            );
-
-          }
-
-        };
-
-
-      reader.onerror =
-        function() {
-
-          resetSubmitButton();
-
-
-          showMessage(
-            'The receipt file could not be read.',
-            false
-          );
-
-        };
-
-
-      reader.readAsDataURL(
-        file
-      );
-
-    }
-
-
-    /*
-     * Verify that Apps Script now reports
-     * hasReceipt = true.
-     */
-    function verifySubmission(attempt) {
-
-      const maxAttempts =
-        5;
-
-
-      const callbackName =
-        'receiptVerify_' +
-        Date.now() +
-        '_' +
-        attempt;
-
-
-      window[callbackName] =
-        function(result) {
-
-          try {
-
-            if (
-              result &&
-              result.success &&
-              result.purchase &&
-              result.purchase.hasReceipt
-            ) {
-
-              statusBox.textContent =
-                'Receipt received.';
-
-
-              formSection.style.display =
-                'none';
-
-
-              showMessage(
-                'Receipt submitted successfully.',
-                true
-              );
-
-
-              return;
-
-            }
-
-
-            if (
-              attempt <
-              maxAttempts
-            ) {
-
-              showMessage(
-                'Receipt sent. Finishing submission...',
-                true
-              );
-
-
-              setTimeout(
-                function() {
-
-                  verifySubmission(
-                    attempt + 1
-                  );
-
-                },
-                4000
-              );
-
-
-              return;
-
-            }
-
-
-            resetSubmitButton();
-
-
-            showMessage(
-              'The receipt could not be confirmed. Please contact your manager before submitting it again.',
-              false
-            );
-
-          }
-
-          finally {
-
-            delete window[
-              callbackName
-            ];
-
-          }
-
-        };
-
-
-      const script =
-        document.createElement('script');
-
-
-      script.src =
-        BACKEND +
-        '?action=lookup' +
-        '&callback=' +
-        encodeURIComponent(
-          callbackName
-        ) +
         '&book=' +
         encodeURIComponent(
           bookId
@@ -802,64 +805,412 @@
         Date.now();
 
 
+
       script.onerror =
         function() {
 
-          delete window[
-            callbackName
-          ];
-
-
-          if (
-            attempt <
-            maxAttempts
-          ) {
-
-            setTimeout(
-              function() {
-
-                verifySubmission(
-                  attempt + 1
-                );
-
-              },
-              4000
-            );
-
-          }
-
-          else {
-
-            resetSubmitButton();
-
-
-            showMessage(
-              'The receipt could not be confirmed. Please contact your manager before submitting it again.',
-              false
-            );
-
-          }
+          statusBox.textContent =
+            'The purchase information could not be loaded.';
 
         };
 
 
-      document.body.appendChild(
-        script
-      );
+
+      document.body
+        .appendChild(
+          script
+        );
+
 
     }
 
 
+
+    /*
+     * Listen for the direct result
+     * returned by Apps Script after
+     * submitReceipt() finishes.
+     */
+    window.addEventListener(
+      'message',
+      function(event) {
+
+
+        /*
+         * Ignore messages that are not
+         * related to an active submission.
+         */
+        if (
+          !submissionInProgress
+        ) {
+
+          return;
+
+        }
+
+
+
+        /*
+         * Apps Script HTML responses may
+         * originate from Google's script
+         * hosting domains, so we verify the
+         * message contents instead of relying
+         * on one fixed Google origin.
+         */
+        const data =
+          event.data;
+
+
+
+        if (
+          !data ||
+          data.type !==
+            'mrRooterReceiptSubmission'
+        ) {
+
+          return;
+
+        }
+
+
+
+        submissionInProgress =
+          false;
+
+
+
+        const result =
+          data.result;
+
+
+
+        if (
+          result &&
+          result.success
+        ) {
+
+
+          statusBox.textContent =
+            'Receipt received.';
+
+
+
+          formSection.style.display =
+            'none';
+
+
+
+          showMessage(
+            result.message ||
+            'Receipt submitted successfully.',
+            true
+          );
+
+
+          return;
+
+        }
+
+
+
+        resetSubmitButton();
+
+
+
+        showMessage(
+          result &&
+          result.message
+            ? result.message
+            : 'The receipt could not be submitted. Please contact your manager before submitting it again.',
+          false
+        );
+
+
+      }
+    );
+
+
+
+    /*
+     * Prepare and submit receipt.
+     */
+    function prepareReceipt() {
+
+
+      if (
+        submissionInProgress
+      ) {
+
+        return;
+
+      }
+
+
+
+      hideMessage();
+
+
+
+      const amount =
+        document
+          .getElementById(
+            'amount'
+          )
+          .value
+          .trim();
+
+
+
+      const fileInput =
+        document
+          .getElementById(
+            'receipt'
+          );
+
+
+
+      const file =
+        fileInput.files[0];
+
+
+
+      if (!amount) {
+
+        showMessage(
+          'Enter the final amount spent.',
+          false
+        );
+
+        return;
+
+      }
+
+
+
+      if (!file) {
+
+        showMessage(
+          'Select or photograph the receipt.',
+          false
+        );
+
+        return;
+
+      }
+
+
+
+      submissionInProgress =
+        true;
+
+
+
+      submitButton.disabled =
+        true;
+
+
+
+      submitButton.textContent =
+        'Submitting Receipt...';
+
+
+
+      const reader =
+        new FileReader();
+
+
+
+      reader.onload =
+        function(event) {
+
+
+          try {
+
+
+            const dataUrl =
+              event.target.result;
+
+
+
+            const comma =
+              dataUrl.indexOf(
+                ','
+              );
+
+
+
+            if (
+              comma === -1
+            ) {
+
+              throw new Error(
+                'The receipt file could not be prepared.'
+              );
+
+            }
+
+
+
+            const base64 =
+              dataUrl.substring(
+                comma + 1
+              );
+
+
+
+            document
+              .getElementById(
+                'formBook'
+              )
+              .value =
+                bookId;
+
+
+
+            document
+              .getElementById(
+                'formPo'
+              )
+              .value =
+                po;
+
+
+
+            document
+              .getElementById(
+                'formAmount'
+              )
+              .value =
+                amount;
+
+
+
+            document
+              .getElementById(
+                'formFileName'
+              )
+              .value =
+                file.name ||
+                'Receipt';
+
+
+
+            document
+              .getElementById(
+                'formMimeType'
+              )
+              .value =
+                file.type ||
+                'application/octet-stream';
+
+
+
+            document
+              .getElementById(
+                'formFileData'
+              )
+              .value =
+                base64;
+
+
+
+            const form =
+              document
+                .getElementById(
+                  'receiptForm'
+                );
+
+
+
+            form.action =
+              BACKEND;
+
+
+
+            showMessage(
+              'Receipt sent. Finishing submission...',
+              true
+            );
+
+
+
+            form.submit();
+
+
+          }
+
+          catch (error) {
+
+
+            submissionInProgress =
+              false;
+
+
+
+            resetSubmitButton();
+
+
+
+            showMessage(
+              error.message ||
+              'The receipt could not be prepared.',
+              false
+            );
+
+
+          }
+
+
+        };
+
+
+
+      reader.onerror =
+        function() {
+
+
+          submissionInProgress =
+            false;
+
+
+
+          resetSubmitButton();
+
+
+
+          showMessage(
+            'The receipt file could not be read.',
+            false
+          );
+
+
+        };
+
+
+
+      reader.readAsDataURL(
+        file
+      );
+
+
+    }
+
+
+
     function resetSubmitButton() {
+
 
       submitButton.disabled =
         false;
 
 
+
       submitButton.textContent =
         'Submit Receipt';
 
+
     }
+
 
 
     function showMessage(
@@ -867,8 +1218,10 @@
       success
     ) {
 
+
       message.textContent =
         text;
+
 
 
       message.className =
@@ -880,23 +1233,32 @@
         );
 
 
+
       message.style.display =
         'block';
 
+
     }
+
 
 
     function hideMessage() {
 
+
       message.style.display =
         'none';
+
 
     }
 
 
+
     loadPurchase();
+
 
   </script>
 
+
 </body>
+
 </html>
