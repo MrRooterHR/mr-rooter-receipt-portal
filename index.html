@@ -233,6 +233,63 @@
     }
 
 
+    .duplicate-section {
+
+      display: none;
+
+      margin-top: 20px;
+
+      padding: 16px;
+
+      border-radius: 8px;
+
+      background: #f8fafc;
+
+      border: 1px solid #dbe2ea;
+
+    }
+
+
+    .duplicate-title {
+
+      margin: 0 0 8px 0;
+
+      font-weight: bold;
+
+      font-size: 17px;
+
+    }
+
+
+    .duplicate-text {
+
+      margin: 0 0 16px 0;
+
+      color: #475467;
+
+      line-height: 1.45;
+
+    }
+
+
+    .secondary-button {
+
+      background: #667085;
+
+    }
+
+
+    .cancel-button {
+
+      display: none;
+
+      margin-top: 10px;
+
+      background: #667085;
+
+    }
+
+
     .message {
 
       display: none;
@@ -408,6 +465,39 @@
 
 
 
+      <!--
+        Shown only when a receipt already
+        exists for this PO.
+      -->
+
+      <div
+        id="duplicateSection"
+        class="duplicate-section"
+      >
+
+        <p class="duplicate-title">
+          Receipt already submitted
+        </p>
+
+        <p class="duplicate-text">
+          A receipt is already on file for this PO.
+          Only submit another receipt if an additional
+          or replacement receipt is needed.
+        </p>
+
+        <button
+          id="additionalReceiptButton"
+          type="button"
+          class="secondary-button"
+          onclick="openAdditionalReceiptForm()"
+        >
+          Submit Another Receipt
+        </button>
+
+      </div>
+
+
+
       <div
         id="formSection"
         class="form-section"
@@ -455,6 +545,16 @@
           onclick="prepareReceipt()"
         >
           Submit Receipt
+        </button>
+
+
+        <button
+          id="cancelButton"
+          type="button"
+          class="cancel-button"
+          onclick="cancelAdditionalReceipt()"
+        >
+          Cancel
         </button>
 
 
@@ -584,6 +684,20 @@
 
 
 
+    const duplicateSection =
+      document.getElementById(
+        'duplicateSection'
+      );
+
+
+
+    const cancelButton =
+      document.getElementById(
+        'cancelButton'
+      );
+
+
+
     const message =
       document.getElementById(
         'message'
@@ -599,6 +713,11 @@
 
 
     let submissionInProgress =
+      false;
+
+
+
+    let existingReceipt =
       false;
 
 
@@ -629,6 +748,13 @@
 
         const purchase =
           result.purchase;
+
+
+
+        existingReceipt =
+          Boolean(
+            purchase.hasReceipt
+          );
 
 
 
@@ -735,17 +861,22 @@
 
 
 
-        formSection.style.display =
-          'block';
-
-
-
         if (
-          purchase.hasReceipt
+          existingReceipt
         ) {
 
           statusBox.textContent =
             'Purchase found. A receipt has already been submitted for this PO.';
+
+
+
+          formSection.style.display =
+            'none';
+
+
+
+          duplicateSection.style.display =
+            'block';
 
         }
 
@@ -753,6 +884,16 @@
 
           statusBox.textContent =
             'Purchase found. Ready for receipt submission.';
+
+
+
+          duplicateSection.style.display =
+            'none';
+
+
+
+          formSection.style.display =
+            'block';
 
         }
 
@@ -763,7 +904,7 @@
 
     /*
      * Load purchase information through
-     * the working JSONP lookup API.
+     * the JSONP lookup API.
      */
     function loadPurchase() {
 
@@ -827,19 +968,118 @@
 
 
     /*
-     * Listen for the direct result
-     * returned by Apps Script after
-     * submitReceipt() finishes.
+     * Deliberately open the form for
+     * an additional/replacement receipt.
+     */
+    function openAdditionalReceiptForm() {
+
+
+      hideMessage();
+
+
+
+      duplicateSection.style.display =
+        'none';
+
+
+
+      formSection.style.display =
+        'block';
+
+
+
+      cancelButton.style.display =
+        'block';
+
+
+
+      statusBox.textContent =
+        'Additional receipt submission.';
+
+
+
+      document
+        .getElementById(
+          'amount'
+        )
+        .focus();
+
+
+    }
+
+
+
+    /*
+     * Cancel an additional receipt
+     * without changing anything.
+     */
+    function cancelAdditionalReceipt() {
+
+
+      if (
+        submissionInProgress
+      ) {
+
+        return;
+
+      }
+
+
+
+      document
+        .getElementById(
+          'amount'
+        )
+        .value =
+          '';
+
+
+
+      document
+        .getElementById(
+          'receipt'
+        )
+        .value =
+          '';
+
+
+
+      formSection.style.display =
+        'none';
+
+
+
+      cancelButton.style.display =
+        'none';
+
+
+
+      duplicateSection.style.display =
+        'block';
+
+
+
+      statusBox.textContent =
+        'Purchase found. A receipt has already been submitted for this PO.';
+
+
+
+      hideMessage();
+
+
+    }
+
+
+
+    /*
+     * Listen for the exact submission
+     * result returned by Apps Script.
      */
     window.addEventListener(
       'message',
       function(event) {
 
 
-        /*
-         * Ignore messages that are not
-         * related to an active submission.
-         */
         if (
           !submissionInProgress
         ) {
@@ -850,13 +1090,6 @@
 
 
 
-        /*
-         * Apps Script HTML responses may
-         * originate from Google's script
-         * hosting domains, so we verify the
-         * message contents instead of relying
-         * on one fixed Google origin.
-         */
         const data =
           event.data;
 
@@ -890,6 +1123,11 @@
         ) {
 
 
+          existingReceipt =
+            true;
+
+
+
           statusBox.textContent =
             'Receipt received.';
 
@@ -900,8 +1138,17 @@
 
 
 
+          duplicateSection.style.display =
+            'none';
+
+
+
+          cancelButton.style.display =
+            'none';
+
+
+
           showMessage(
-            result.message ||
             'Receipt submitted successfully.',
             true
           );
