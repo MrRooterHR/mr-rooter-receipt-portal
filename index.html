@@ -702,13 +702,14 @@
 
 
             /*
-             * For this first transport test,
-             * give Apps Script time to process,
-             * then re-check the PO through
-             * the working lookup API.
+             * Start checking after 4 seconds.
+             * If Apps Script / Sheets is still
+             * processing, verification will retry.
              */
             setTimeout(
-              verifySubmission,
+              function() {
+                verifySubmission(1);
+              },
               4000
             );
 
@@ -753,14 +754,24 @@
 
     /*
      * Re-check the PO after submission.
-     * This avoids needing to read the
-     * cross-origin POST response.
+     *
+     * Apps Script may finish the upload before
+     * the updated receipt status is visible to
+     * the lookup request. Retry several times
+     * before treating the submission as
+     * unconfirmed.
      */
-    function verifySubmission() {
+    function verifySubmission(attempt) {
+
+      const maxAttempts =
+        5;
+
 
       const callbackName =
         'receiptVerify_' +
-        Date.now();
+        Date.now() +
+        '_' +
+        attempt;
 
 
       window[callbackName] =
@@ -788,19 +799,47 @@
                 true
               );
 
+
+              return;
+
             }
 
-            else {
 
-              resetSubmitButton();
-
+            if (
+              attempt <
+              maxAttempts
+            ) {
 
               showMessage(
-                'The receipt has not been confirmed yet. Please wait a moment before trying again.',
-                false
+                'Receipt sent. Finishing submission...',
+                true
               );
 
+
+              setTimeout(
+                function() {
+
+                  verifySubmission(
+                    attempt + 1
+                  );
+
+                },
+                4000
+              );
+
+
+              return;
+
             }
+
+
+            resetSubmitButton();
+
+
+            showMessage(
+              'The receipt could not be confirmed. Please contact your manager before submitting it again.',
+              false
+            );
 
           }
 
@@ -836,6 +875,47 @@
         ) +
         '&t=' +
         Date.now();
+
+
+      script.onerror =
+        function() {
+
+          delete window[
+            callbackName
+          ];
+
+
+          if (
+            attempt <
+            maxAttempts
+          ) {
+
+            setTimeout(
+              function() {
+
+                verifySubmission(
+                  attempt + 1
+                );
+
+              },
+              4000
+            );
+
+          }
+
+          else {
+
+            resetSubmitButton();
+
+
+            showMessage(
+              'The receipt could not be confirmed. Please contact your manager before submitting it again.',
+              false
+            );
+
+          }
+
+        };
 
 
       document.body.appendChild(
