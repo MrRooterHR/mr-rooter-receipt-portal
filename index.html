@@ -14,19 +14,15 @@
     Mr. Rooter Receipt Portal
   </title>
 
-
   <style>
 
     * {
       box-sizing: border-box;
     }
 
-
     body {
-
       margin: 0;
       padding: 20px;
-
       background: #f3f5f7;
 
       font-family:
@@ -35,300 +31,172 @@
         sans-serif;
 
       color: #1f2933;
-
     }
-
 
     .container {
-
       max-width: 520px;
-
       margin: 0 auto;
-
     }
 
-
     .card {
-
       background: white;
-
       border-radius: 12px;
-
       padding: 24px;
 
       box-shadow:
         0 2px 10px
         rgba(0, 0, 0, 0.08);
-
     }
-
 
     h1 {
-
       margin-top: 0;
-
       margin-bottom: 6px;
-
       font-size: 26px;
-
       text-align: center;
-
     }
-
 
     .subtitle {
-
       text-align: center;
-
       color: #667085;
-
       margin-bottom: 24px;
-
     }
-
 
     .status {
-
       padding: 12px;
-
       border-radius: 8px;
-
       margin-bottom: 20px;
-
       background: #eef2f6;
-
       text-align: center;
-
       font-weight: bold;
-
     }
-
 
     .details {
-
       margin-bottom: 24px;
-
     }
 
-
     .detail-row {
-
       padding: 10px 0;
 
       border-bottom:
         1px solid #e5e7eb;
-
     }
-
 
     .label {
-
       display: block;
-
       font-size: 12px;
-
       font-weight: bold;
-
       color: #667085;
-
       text-transform: uppercase;
-
       margin-bottom: 3px;
-
     }
-
 
     .value {
-
       font-size: 16px;
-
       word-break: break-word;
-
     }
-
 
     .form-section {
-
       display: none;
-
     }
-
 
     .field {
-
       margin-bottom: 20px;
-
     }
-
 
     label {
-
       display: block;
-
       font-weight: bold;
-
       margin-bottom: 7px;
-
     }
-
 
     input[type="number"],
     input[type="file"] {
-
       width: 100%;
-
       font-size: 16px;
-
     }
 
-
     input[type="number"] {
-
       padding: 12px;
 
       border:
         1px solid #cbd5e1;
 
       border-radius: 8px;
-
     }
-
 
     input[type="file"] {
-
       padding: 10px 0;
-
     }
-
 
     button {
-
       width: 100%;
-
       padding: 14px;
-
       border: none;
-
       border-radius: 8px;
-
       font-size: 17px;
-
       font-weight: bold;
-
       cursor: pointer;
-
       background: #1f4e79;
-
       color: white;
-
     }
-
 
     button:disabled {
-
       opacity: 0.6;
-
       cursor: not-allowed;
-
     }
-
 
     .duplicate-section {
-
       display: none;
-
       margin-top: 20px;
-
       padding: 16px;
-
       border-radius: 8px;
-
       background: #f8fafc;
-
       border: 1px solid #dbe2ea;
-
     }
-
 
     .duplicate-title {
-
       margin: 0 0 8px 0;
-
       font-weight: bold;
-
       font-size: 17px;
-
     }
-
 
     .duplicate-text {
-
       margin: 0 0 16px 0;
-
       color: #475467;
-
       line-height: 1.45;
-
     }
-
 
     .secondary-button {
-
       background: #667085;
-
     }
-
 
     .cancel-button {
-
       display: none;
-
       margin-top: 10px;
-
       background: #667085;
-
     }
-
 
     .message {
-
       display: none;
-
       margin-top: 18px;
-
       padding: 12px;
-
       border-radius: 8px;
-
       text-align: center;
-
       font-weight: bold;
-
     }
-
 
     .success {
-
       background: #e8f5e9;
-
       color: #256029;
-
     }
-
 
     .error {
-
       background: #fdecec;
-
       color: #b42318;
-
     }
 
-
     .hidden-frame {
-
       display: none;
-
     }
 
   </style>
@@ -338,22 +206,17 @@
 
 <body>
 
-
   <div class="container">
 
-
     <div class="card">
-
 
       <h1>
         Submit Purchase Receipt
       </h1>
 
-
       <div class="subtitle">
         Mr. Rooter Plumbing
       </div>
-
 
       <div
         id="status"
@@ -363,13 +226,11 @@
       </div>
 
 
-
       <div
         id="details"
         class="details"
         style="display:none;"
       >
-
 
         <div class="detail-row">
 
@@ -460,15 +321,8 @@
 
         </div>
 
-
       </div>
 
-
-
-      <!--
-        Shown only when a receipt already
-        exists for this PO.
-      -->
 
       <div
         id="duplicateSection"
@@ -497,12 +351,10 @@
       </div>
 
 
-
       <div
         id="formSection"
         class="form-section"
       >
-
 
         <div class="field">
 
@@ -557,9 +409,7 @@
           Cancel
         </button>
 
-
       </div>
-
 
 
       <div
@@ -567,20 +417,60 @@
         class="message"
       ></div>
 
-
     </div>
-
 
   </div>
 
 
+  <!--
+    PURCHASE LOOKUP
+
+    This form performs the initial PO lookup
+    through a normal POST into a hidden iframe.
+
+    This replaces the old JSONP request.
+  -->
+
+  <form
+    id="lookupForm"
+    method="POST"
+    target="lookupFrame"
+    style="display:none;"
+  >
+
+    <input
+      type="hidden"
+      name="action"
+      value="lookup"
+    >
+
+    <input
+      type="hidden"
+      name="book"
+      id="lookupBook"
+    >
+
+    <input
+      type="hidden"
+      name="po"
+      id="lookupPo"
+    >
+
+  </form>
+
+
+  <iframe
+    name="lookupFrame"
+    id="lookupFrame"
+    class="hidden-frame"
+  ></iframe>
+
 
   <!--
-    Hidden form used to submit the receipt
-    to Apps Script.
+    RECEIPT SUBMISSION
 
-    The Apps Script response loads inside
-    the hidden iframe below.
+    This is the existing hidden-form receipt
+    submission architecture.
   -->
 
   <form
@@ -589,6 +479,12 @@
     target="receiptFrame"
     style="display:none;"
   >
+
+    <input
+      type="hidden"
+      name="action"
+      value="submit"
+    >
 
     <input
       type="hidden"
@@ -629,7 +525,6 @@
   </form>
 
 
-
   <iframe
     name="receiptFrame"
     id="receiptFrame"
@@ -637,13 +532,10 @@
   ></iframe>
 
 
-
   <script>
-
 
     const BACKEND =
       'https://script.google.com/macros/s/AKfycbwPTH0fqVAeAUJWRpv70UhpagdYhx2ZKIXE_UbZXB2GVcmfjgkxUMNN7qjGUH328C0/exec';
-
 
 
     const params =
@@ -652,15 +544,12 @@
       );
 
 
-
     const bookId =
       params.get('book') || '';
 
 
-
     const po =
       params.get('po') || '';
-
 
 
     const statusBox =
@@ -669,12 +558,10 @@
       );
 
 
-
     const details =
       document.getElementById(
         'details'
       );
-
 
 
     const formSection =
@@ -683,12 +570,10 @@
       );
 
 
-
     const duplicateSection =
       document.getElementById(
         'duplicateSection'
       );
-
 
 
     const cancelButton =
@@ -697,12 +582,10 @@
       );
 
 
-
     const message =
       document.getElementById(
         'message'
       );
-
 
 
     const submitButton =
@@ -711,203 +594,176 @@
       );
 
 
-
     let submissionInProgress =
       false;
 
+
+    let lookupInProgress =
+      false;
 
 
     let existingReceipt =
       false;
 
 
-
     /*
-     * Initial purchase lookup.
+     * Process successful purchase information.
      */
-    window.receiptLookup =
-      function(result) {
+    function processPurchaseLookup(result) {
+
+      if (
+        !result ||
+        !result.success
+      ) {
+
+        statusBox.textContent =
+          result &&
+          result.message
+            ? result.message
+            : 'Purchase could not be found.';
+
+        return;
+      }
 
 
-        if (
-          !result ||
-          !result.success
-        ) {
-
-          statusBox.textContent =
-            result &&
-            result.message
-              ? result.message
-              : 'Purchase could not be found.';
-
-          return;
-
-        }
+      const purchase =
+        result.purchase;
 
 
-
-        const purchase =
-          result.purchase;
-
-
-
-        existingReceipt =
-          Boolean(
-            purchase.hasReceipt
-          );
+      existingReceipt =
+        Boolean(
+          purchase.hasReceipt
+        );
 
 
-
-        document
-          .getElementById(
-            'poDisplay'
-          )
-          .textContent =
-            purchase.po ||
-            po;
-
+      document
+        .getElementById(
+          'poDisplay'
+        )
+        .textContent =
+          purchase.po ||
+          po;
 
 
-        document
-          .getElementById(
-            'techDisplay'
-          )
-          .textContent =
-            purchase.technician ||
-            '';
-
-
-
-        document
-          .getElementById(
-            'vendorDisplay'
-          )
-          .textContent =
-            purchase.vendor ||
-            '';
-
-
-
-        document
-          .getElementById(
-            'categoryDisplay'
-          )
-          .textContent =
-            purchase.category ||
-            '';
-
-
-
-        const jobNumber =
-          purchase.jobNumber ||
-          purchase.job ||
+      document
+        .getElementById(
+          'techDisplay'
+        )
+        .textContent =
+          purchase.technician ||
           '';
 
 
-
-        const customer =
-          purchase.customerJob ||
-          purchase.customer ||
+      document
+        .getElementById(
+          'vendorDisplay'
+        )
+        .textContent =
+          purchase.vendor ||
           '';
 
 
-
-        document
-          .getElementById(
-            'jobDisplay'
-          )
-          .textContent =
-            jobNumber;
-
-
-
-        document
-          .getElementById(
-            'customerDisplay'
-          )
-          .textContent =
-            customer;
+      document
+        .getElementById(
+          'categoryDisplay'
+        )
+        .textContent =
+          purchase.category ||
+          '';
 
 
-
-        if (!jobNumber) {
-
-          document
-            .getElementById(
-              'jobRow'
-            )
-            .style.display =
-              'none';
-
-        }
+      const jobNumber =
+        purchase.jobNumber ||
+        purchase.job ||
+        '';
 
 
-
-        if (!customer) {
-
-          document
-            .getElementById(
-              'customerRow'
-            )
-            .style.display =
-              'none';
-
-        }
+      const customer =
+        purchase.customerJob ||
+        purchase.customer ||
+        '';
 
 
+      document
+        .getElementById(
+          'jobDisplay'
+        )
+        .textContent =
+          jobNumber;
 
-        details.style.display =
+
+      document
+        .getElementById(
+          'customerDisplay'
+        )
+        .textContent =
+          customer;
+
+
+      document
+        .getElementById(
+          'jobRow'
+        )
+        .style.display =
+          jobNumber
+            ? 'block'
+            : 'none';
+
+
+      document
+        .getElementById(
+          'customerRow'
+        )
+        .style.display =
+          customer
+            ? 'block'
+            : 'none';
+
+
+      details.style.display =
+        'block';
+
+
+      if (
+        existingReceipt
+      ) {
+
+        statusBox.textContent =
+          'Purchase found. A receipt has already been submitted for this PO.';
+
+
+        formSection.style.display =
+          'none';
+
+
+        duplicateSection.style.display =
           'block';
 
+      }
+
+      else {
+
+        statusBox.textContent =
+          'Purchase found. Ready for receipt submission.';
 
 
-        if (
-          existingReceipt
-        ) {
-
-          statusBox.textContent =
-            'Purchase found. A receipt has already been submitted for this PO.';
+        duplicateSection.style.display =
+          'none';
 
 
+        formSection.style.display =
+          'block';
 
-          formSection.style.display =
-            'none';
+      }
 
-
-
-          duplicateSection.style.display =
-            'block';
-
-        }
-
-        else {
-
-          statusBox.textContent =
-            'Purchase found. Ready for receipt submission.';
-
-
-
-          duplicateSection.style.display =
-            'none';
-
-
-
-          formSection.style.display =
-            'block';
-
-        }
-
-
-      };
-
+    }
 
 
     /*
      * Load purchase information through
-     * the JSONP lookup API.
+     * the hidden POST/iframe transport.
      */
     function loadPurchase() {
-
 
       if (
         !bookId ||
@@ -918,53 +774,42 @@
           'This receipt link is incomplete.';
 
         return;
-
       }
 
 
+      lookupInProgress =
+        true;
 
-      const script =
-        document.createElement(
-          'script'
+
+      document
+        .getElementById(
+          'lookupBook'
+        )
+        .value =
+          bookId;
+
+
+      document
+        .getElementById(
+          'lookupPo'
+        )
+        .value =
+          po;
+
+
+      const lookupForm =
+        document.getElementById(
+          'lookupForm'
         );
 
 
-
-      script.src =
-        BACKEND +
-        '?action=lookup' +
-        '&callback=receiptLookup' +
-        '&book=' +
-        encodeURIComponent(
-          bookId
-        ) +
-        '&po=' +
-        encodeURIComponent(
-          po
-        ) +
-        '&t=' +
-        Date.now();
+      lookupForm.action =
+        BACKEND;
 
 
-
-      script.onerror =
-        function() {
-
-          statusBox.textContent =
-            'The purchase information could not be loaded.';
-
-        };
-
-
-
-      document.body
-        .appendChild(
-          script
-        );
-
+      lookupForm.submit();
 
     }
-
 
 
     /*
@@ -973,29 +818,23 @@
      */
     function openAdditionalReceiptForm() {
 
-
       hideMessage();
-
 
 
       duplicateSection.style.display =
         'none';
 
 
-
       formSection.style.display =
         'block';
-
 
 
       cancelButton.style.display =
         'block';
 
 
-
       statusBox.textContent =
         'Additional receipt submission.';
-
 
 
       document
@@ -1004,9 +843,7 @@
         )
         .focus();
 
-
     }
-
 
 
     /*
@@ -1015,15 +852,12 @@
      */
     function cancelAdditionalReceipt() {
 
-
       if (
         submissionInProgress
       ) {
 
         return;
-
       }
-
 
 
       document
@@ -1032,7 +866,6 @@
         )
         .value =
           '';
-
 
 
       document
@@ -1043,41 +876,89 @@
           '';
 
 
-
       formSection.style.display =
         'none';
-
 
 
       cancelButton.style.display =
         'none';
 
 
-
       duplicateSection.style.display =
         'block';
-
 
 
       statusBox.textContent =
         'Purchase found. A receipt has already been submitted for this PO.';
 
 
-
       hideMessage();
-
 
     }
 
 
-
     /*
-     * Listen for the exact submission
-     * result returned by Apps Script.
+     * Listen for BOTH backend response types:
+     *
+     * 1. Purchase lookup
+     * 2. Receipt submission
      */
     window.addEventListener(
       'message',
       function(event) {
+
+        const data =
+          event.data;
+
+
+        if (
+          !data ||
+          !data.type
+        ) {
+
+          return;
+        }
+
+
+        /*
+         * PURCHASE LOOKUP RESPONSE
+         */
+        if (
+          data.type ===
+          'mrRooterReceiptLookup'
+        ) {
+
+          if (
+            !lookupInProgress
+          ) {
+
+            return;
+          }
+
+
+          lookupInProgress =
+            false;
+
+
+          processPurchaseLookup(
+            data.result
+          );
+
+
+          return;
+        }
+
+
+        /*
+         * RECEIPT SUBMISSION RESPONSE
+         */
+        if (
+          data.type !==
+          'mrRooterReceiptSubmission'
+        ) {
+
+          return;
+        }
 
 
         if (
@@ -1085,36 +966,15 @@
         ) {
 
           return;
-
         }
-
-
-
-        const data =
-          event.data;
-
-
-
-        if (
-          !data ||
-          data.type !==
-            'mrRooterReceiptSubmission'
-        ) {
-
-          return;
-
-        }
-
 
 
         submissionInProgress =
           false;
 
 
-
         const result =
           data.result;
-
 
 
         if (
@@ -1122,30 +982,24 @@
           result.success
         ) {
 
-
           existingReceipt =
             true;
-
 
 
           statusBox.textContent =
             'Receipt received.';
 
 
-
           formSection.style.display =
             'none';
-
 
 
           duplicateSection.style.display =
             'none';
 
 
-
           cancelButton.style.display =
             'none';
-
 
 
           showMessage(
@@ -1155,13 +1009,10 @@
 
 
           return;
-
         }
 
 
-
         resetSubmitButton();
-
 
 
         showMessage(
@@ -1172,10 +1023,8 @@
           false
         );
 
-
       }
     );
-
 
 
     /*
@@ -1183,19 +1032,15 @@
      */
     function prepareReceipt() {
 
-
       if (
         submissionInProgress
       ) {
 
         return;
-
       }
 
 
-
       hideMessage();
-
 
 
       const amount =
@@ -1207,7 +1052,6 @@
           .trim();
 
 
-
       const fileInput =
         document
           .getElementById(
@@ -1215,10 +1059,8 @@
           );
 
 
-
       const file =
         fileInput.files[0];
-
 
 
       if (!amount) {
@@ -1229,9 +1071,7 @@
         );
 
         return;
-
       }
-
 
 
       if (!file) {
@@ -1242,48 +1082,38 @@
         );
 
         return;
-
       }
-
 
 
       submissionInProgress =
         true;
 
 
-
       submitButton.disabled =
         true;
-
 
 
       submitButton.textContent =
         'Submitting Receipt...';
 
 
-
       const reader =
         new FileReader();
-
 
 
       reader.onload =
         function(event) {
 
-
           try {
-
 
             const dataUrl =
               event.target.result;
-
 
 
             const comma =
               dataUrl.indexOf(
                 ','
               );
-
 
 
             if (
@@ -1293,16 +1123,13 @@
               throw new Error(
                 'The receipt file could not be prepared.'
               );
-
             }
-
 
 
             const base64 =
               dataUrl.substring(
                 comma + 1
               );
-
 
 
             document
@@ -1313,7 +1140,6 @@
                 bookId;
 
 
-
             document
               .getElementById(
                 'formPo'
@@ -1322,14 +1148,12 @@
                 po;
 
 
-
             document
               .getElementById(
                 'formAmount'
               )
               .value =
                 amount;
-
 
 
             document
@@ -1341,7 +1165,6 @@
                 'Receipt';
 
 
-
             document
               .getElementById(
                 'formMimeType'
@@ -1349,7 +1172,6 @@
               .value =
                 file.type ||
                 'application/octet-stream';
-
 
 
             document
@@ -1360,7 +1182,6 @@
                 base64;
 
 
-
             const form =
               document
                 .getElementById(
@@ -1368,10 +1189,8 @@
                 );
 
 
-
             form.action =
               BACKEND;
-
 
 
             showMessage(
@@ -1380,22 +1199,17 @@
             );
 
 
-
             form.submit();
-
 
           }
 
           catch (error) {
 
-
             submissionInProgress =
               false;
 
 
-
             resetSubmitButton();
-
 
 
             showMessage(
@@ -1404,25 +1218,19 @@
               false
             );
 
-
           }
 
-
         };
-
 
 
       reader.onerror =
         function() {
 
-
           submissionInProgress =
             false;
 
 
-
           resetSubmitButton();
-
 
 
           showMessage(
@@ -1430,34 +1238,26 @@
             false
           );
 
-
         };
-
 
 
       reader.readAsDataURL(
         file
       );
 
-
     }
 
 
-
     function resetSubmitButton() {
-
 
       submitButton.disabled =
         false;
 
 
-
       submitButton.textContent =
         'Submit Receipt';
 
-
     }
-
 
 
     function showMessage(
@@ -1465,10 +1265,8 @@
       success
     ) {
 
-
       message.textContent =
         text;
-
 
 
       message.className =
@@ -1480,31 +1278,23 @@
         );
 
 
-
       message.style.display =
         'block';
 
-
     }
-
 
 
     function hideMessage() {
 
-
       message.style.display =
         'none';
-
 
     }
 
 
-
     loadPurchase();
 
-
   </script>
-
 
 </body>
 
