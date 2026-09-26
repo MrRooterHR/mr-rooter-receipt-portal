@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
   <meta charset="UTF-8">
 
   <meta
@@ -10,12 +9,9 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>
-    Mr. Rooter Receipt Portal
-  </title>
+  <title>Mr. Rooter Receipt Portal</title>
 
   <style>
-
     * {
       box-sizing: border-box;
     }
@@ -24,12 +20,7 @@
       margin: 0;
       padding: 20px;
       background: #f3f5f7;
-
-      font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
+      font-family: Arial, Helvetica, sans-serif;
       color: #1f2933;
     }
 
@@ -42,10 +33,7 @@
       background: white;
       border-radius: 12px;
       padding: 24px;
-
-      box-shadow:
-        0 2px 10px
-        rgba(0, 0, 0, 0.08);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
     }
 
     h1 {
@@ -76,9 +64,7 @@
 
     .detail-row {
       padding: 10px 0;
-
-      border-bottom:
-        1px solid #e5e7eb;
+      border-bottom: 1px solid #e5e7eb;
     }
 
     .label {
@@ -117,10 +103,7 @@
 
     input[type="number"] {
       padding: 12px;
-
-      border:
-        1px solid #cbd5e1;
-
+      border: 1px solid #cbd5e1;
       border-radius: 8px;
     }
 
@@ -198,9 +181,7 @@
     .hidden-frame {
       display: none;
     }
-
   </style>
-
 </head>
 
 
@@ -210,9 +191,7 @@
 
     <div class="card">
 
-      <h1>
-        Submit Purchase Receipt
-      </h1>
+      <h1>Submit Purchase Receipt</h1>
 
       <div class="subtitle">
         Mr. Rooter Plumbing
@@ -222,7 +201,7 @@
         id="status"
         class="status"
       >
-        Looking up purchase...
+        Loading purchase...
       </div>
 
 
@@ -233,58 +212,26 @@
       >
 
         <div class="detail-row">
-
-          <span class="label">
-            PO Number
-          </span>
-
-          <span
-            id="poDisplay"
-            class="value"
-          ></span>
-
+          <span class="label">PO Number</span>
+          <span id="poDisplay" class="value"></span>
         </div>
 
 
         <div class="detail-row">
-
-          <span class="label">
-            Technician
-          </span>
-
-          <span
-            id="techDisplay"
-            class="value"
-          ></span>
-
+          <span class="label">Technician</span>
+          <span id="techDisplay" class="value"></span>
         </div>
 
 
         <div class="detail-row">
-
-          <span class="label">
-            Vendor
-          </span>
-
-          <span
-            id="vendorDisplay"
-            class="value"
-          ></span>
-
+          <span class="label">Vendor</span>
+          <span id="vendorDisplay" class="value"></span>
         </div>
 
 
         <div class="detail-row">
-
-          <span class="label">
-            Category
-          </span>
-
-          <span
-            id="categoryDisplay"
-            class="value"
-          ></span>
-
+          <span class="label">Category</span>
+          <span id="categoryDisplay" class="value"></span>
         </div>
 
 
@@ -292,33 +239,8 @@
           id="jobRow"
           class="detail-row"
         >
-
-          <span class="label">
-            Job #
-          </span>
-
-          <span
-            id="jobDisplay"
-            class="value"
-          ></span>
-
-        </div>
-
-
-        <div
-          id="customerRow"
-          class="detail-row"
-        >
-
-          <span class="label">
-            Customer / Job
-          </span>
-
-          <span
-            id="customerDisplay"
-            class="value"
-          ></span>
-
+          <span class="label">Job #</span>
+          <span id="jobDisplay" class="value"></span>
         </div>
 
       </div>
@@ -423,54 +345,8 @@
 
 
   <!--
-    PURCHASE LOOKUP
-
-    This form performs the initial PO lookup
-    through a normal POST into a hidden iframe.
-
-    This replaces the old JSONP request.
-  -->
-
-  <form
-    id="lookupForm"
-    method="POST"
-    target="lookupFrame"
-    style="display:none;"
-  >
-
-    <input
-      type="hidden"
-      name="action"
-      value="lookup"
-    >
-
-    <input
-      type="hidden"
-      name="book"
-      id="lookupBook"
-    >
-
-    <input
-      type="hidden"
-      name="po"
-      id="lookupPo"
-    >
-
-  </form>
-
-
-  <iframe
-    name="lookupFrame"
-    id="lookupFrame"
-    class="hidden-frame"
-  ></iframe>
-
-
-  <!--
-    RECEIPT SUBMISSION
-
-    This is the existing hidden-form receipt
-    submission architecture.
+    Receipt submission still goes through the
+    proven Apps Script hidden POST/iframe route.
   -->
 
   <form
@@ -538,6 +414,12 @@
       'https://script.google.com/macros/s/AKfycbwPTH0fqVAeAUJWRpv70UhpagdYhx2ZKIXE_UbZXB2GVcmfjgkxUMNN7qjGUH328C0/exec';
 
 
+    /*
+     * Everything needed to DISPLAY the purchase
+     * comes directly from the workbook-generated URL.
+     *
+     * No Google request happens when this page opens.
+     */
     const params =
       new URLSearchParams(
         window.location.search
@@ -550,6 +432,34 @@
 
     const po =
       params.get('po') || '';
+
+
+    const technician =
+      params.get('tech') || '';
+
+
+    const vendor =
+      params.get('vendor') || '';
+
+
+    const category =
+      params.get('cat') || '';
+
+
+    const jobNumber =
+      params.get('job') || '';
+
+
+    const receiptFlag =
+      params.get('receipt') || '0';
+
+
+    let existingReceipt =
+      receiptFlag === '1';
+
+
+    let submissionInProgress =
+      false;
 
 
     const statusBox =
@@ -594,46 +504,26 @@
       );
 
 
-    let submissionInProgress =
-      false;
-
-
-    let lookupInProgress =
-      false;
-
-
-    let existingReceipt =
-      false;
-
-
     /*
-     * Process successful purchase information.
+     * Render the purchase directly from
+     * the URL parameters.
      */
-    function processPurchaseLookup(result) {
+    function loadPurchase() {
 
+      /*
+       * We still require book + PO because Apps Script
+       * needs both when the receipt is submitted.
+       */
       if (
-        !result ||
-        !result.success
+        !bookId ||
+        !po
       ) {
 
         statusBox.textContent =
-          result &&
-          result.message
-            ? result.message
-            : 'Purchase could not be found.';
+          'This receipt link is incomplete.';
 
         return;
       }
-
-
-      const purchase =
-        result.purchase;
-
-
-      existingReceipt =
-        Boolean(
-          purchase.hasReceipt
-        );
 
 
       document
@@ -641,7 +531,6 @@
           'poDisplay'
         )
         .textContent =
-          purchase.po ||
           po;
 
 
@@ -650,8 +539,7 @@
           'techDisplay'
         )
         .textContent =
-          purchase.technician ||
-          '';
+          technician;
 
 
       document
@@ -659,8 +547,7 @@
           'vendorDisplay'
         )
         .textContent =
-          purchase.vendor ||
-          '';
+          vendor;
 
 
       document
@@ -668,20 +555,7 @@
           'categoryDisplay'
         )
         .textContent =
-          purchase.category ||
-          '';
-
-
-      const jobNumber =
-        purchase.jobNumber ||
-        purchase.job ||
-        '';
-
-
-      const customer =
-        purchase.customerJob ||
-        purchase.customer ||
-        '';
+          category;
 
 
       document
@@ -694,14 +568,6 @@
 
       document
         .getElementById(
-          'customerDisplay'
-        )
-        .textContent =
-          customer;
-
-
-      document
-        .getElementById(
           'jobRow'
         )
         .style.display =
@@ -710,20 +576,14 @@
             : 'none';
 
 
-      document
-        .getElementById(
-          'customerRow'
-        )
-        .style.display =
-          customer
-            ? 'block'
-            : 'none';
-
-
       details.style.display =
         'block';
 
 
+      /*
+       * The workbook tells the portal whether
+       * Column M already contains a receipt.
+       */
       if (
         existingReceipt
       ) {
@@ -760,61 +620,7 @@
 
 
     /*
-     * Load purchase information through
-     * the hidden POST/iframe transport.
-     */
-    function loadPurchase() {
-
-      if (
-        !bookId ||
-        !po
-      ) {
-
-        statusBox.textContent =
-          'This receipt link is incomplete.';
-
-        return;
-      }
-
-
-      lookupInProgress =
-        true;
-
-
-      document
-        .getElementById(
-          'lookupBook'
-        )
-        .value =
-          bookId;
-
-
-      document
-        .getElementById(
-          'lookupPo'
-        )
-        .value =
-          po;
-
-
-      const lookupForm =
-        document.getElementById(
-          'lookupForm'
-        );
-
-
-      lookupForm.action =
-        BACKEND;
-
-
-      lookupForm.submit();
-
-    }
-
-
-    /*
-     * Deliberately open the form for
-     * an additional/replacement receipt.
+     * Open additional/replacement receipt form.
      */
     function openAdditionalReceiptForm() {
 
@@ -847,8 +653,7 @@
 
 
     /*
-     * Cancel an additional receipt
-     * without changing anything.
+     * Cancel additional receipt submission.
      */
     function cancelAdditionalReceipt() {
 
@@ -898,10 +703,10 @@
 
 
     /*
-     * Listen for BOTH backend response types:
+     * Receipt submission acknowledgement.
      *
-     * 1. Purchase lookup
-     * 2. Receipt submission
+     * Apps Script completes the actual Drive/workbook
+     * operation before sending this message.
      */
     window.addEventListener(
       'message',
@@ -913,48 +718,8 @@
 
         if (
           !data ||
-          !data.type
-        ) {
-
-          return;
-        }
-
-
-        /*
-         * PURCHASE LOOKUP RESPONSE
-         */
-        if (
-          data.type ===
-          'mrRooterReceiptLookup'
-        ) {
-
-          if (
-            !lookupInProgress
-          ) {
-
-            return;
-          }
-
-
-          lookupInProgress =
-            false;
-
-
-          processPurchaseLookup(
-            data.result
-          );
-
-
-          return;
-        }
-
-
-        /*
-         * RECEIPT SUBMISSION RESPONSE
-         */
-        if (
           data.type !==
-          'mrRooterReceiptSubmission'
+            'mrRooterReceiptSubmission'
         ) {
 
           return;
@@ -1028,7 +793,8 @@
 
 
     /*
-     * Prepare and submit receipt.
+     * Prepare receipt and submit it through
+     * the existing hidden POST/iframe route.
      */
     function prepareReceipt() {
 
@@ -1292,6 +1058,12 @@
     }
 
 
+    /*
+     * No network lookup.
+     *
+     * Purchase information renders immediately
+     * from the workbook-generated URL.
+     */
     loadPurchase();
 
   </script>
