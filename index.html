@@ -166,6 +166,7 @@
       border-radius: 8px;
       text-align: center;
       font-weight: bold;
+      line-height: 1.45;
     }
 
     .success {
@@ -345,8 +346,8 @@
 
 
   <!--
-    Receipt submission still goes through the
-    proven Apps Script hidden POST/iframe route.
+    Receipt submission continues through
+    the working Apps Script hidden POST/iframe.
   -->
 
   <form
@@ -415,11 +416,17 @@
 
 
     /*
-     * Everything needed to DISPLAY the purchase
-     * comes directly from the workbook-generated URL.
+     * If Apps Script successfully reports back,
+     * success appears immediately.
      *
-     * No Google request happens when this page opens.
+     * If the browser blocks the iframe acknowledgement,
+     * the technician is released after this delay instead
+     * of seeing an endless "Finishing submission" message.
      */
+    const ACKNOWLEDGEMENT_TIMEOUT_MS =
+      8000;
+
+
     const params =
       new URLSearchParams(
         window.location.search
@@ -460,6 +467,10 @@
 
     let submissionInProgress =
       false;
+
+
+    let acknowledgementTimer =
+      null;
 
 
     const statusBox =
@@ -505,15 +516,13 @@
 
 
     /*
-     * Render the purchase directly from
-     * the URL parameters.
+     * Purchase details are rendered entirely
+     * from the workbook-generated URL.
+     *
+     * No Google lookup occurs when the page opens.
      */
     function loadPurchase() {
 
-      /*
-       * We still require book + PO because Apps Script
-       * needs both when the receipt is submitted.
-       */
       if (
         !bookId ||
         !po
@@ -580,10 +589,6 @@
         'block';
 
 
-      /*
-       * The workbook tells the portal whether
-       * Column M already contains a receipt.
-       */
       if (
         existingReceipt
       ) {
@@ -619,9 +624,6 @@
     }
 
 
-    /*
-     * Open additional/replacement receipt form.
-     */
     function openAdditionalReceiptForm() {
 
       hideMessage();
@@ -652,9 +654,6 @@
     }
 
 
-    /*
-     * Cancel additional receipt submission.
-     */
     function cancelAdditionalReceipt() {
 
       if (
@@ -703,10 +702,91 @@
 
 
     /*
-     * Receipt submission acknowledgement.
+     * Start the fail-safe AFTER the POST has
+     * actually been sent.
      *
-     * Apps Script completes the actual Drive/workbook
-     * operation before sending this message.
+     * This does not submit anything again.
+     */
+    function startAcknowledgementTimer() {
+
+      clearAcknowledgementTimer();
+
+
+      acknowledgementTimer =
+        window.setTimeout(
+          function() {
+
+            if (
+              !submissionInProgress
+            ) {
+
+              return;
+            }
+
+
+            /*
+             * We deliberately do NOT retry here.
+             *
+             * At this point the receipt has already
+             * been sent to Apps Script. Retrying could
+             * create a duplicate receipt.
+             */
+            submissionInProgress =
+              false;
+
+
+            statusBox.textContent =
+              'Receipt sent.';
+
+
+            formSection.style.display =
+              'none';
+
+
+            duplicateSection.style.display =
+              'none';
+
+
+            cancelButton.style.display =
+              'none';
+
+
+            showMessage(
+              'Receipt sent. You may close this page.',
+              true
+            );
+
+          },
+          ACKNOWLEDGEMENT_TIMEOUT_MS
+        );
+
+    }
+
+
+    function clearAcknowledgementTimer() {
+
+      if (
+        acknowledgementTimer !== null
+      ) {
+
+        window.clearTimeout(
+          acknowledgementTimer
+        );
+
+
+        acknowledgementTimer =
+          null;
+
+      }
+
+    }
+
+
+    /*
+     * Listen for the REAL Apps Script acknowledgement.
+     *
+     * Browsers that allow it will receive confirmed
+     * success or the actual backend error.
      */
     window.addEventListener(
       'message',
@@ -732,6 +812,9 @@
 
           return;
         }
+
+
+        clearAcknowledgementTimer();
 
 
         submissionInProgress =
@@ -792,10 +875,6 @@
     );
 
 
-    /*
-     * Prepare receipt and submit it through
-     * the existing hidden POST/iframe route.
-     */
     function prepareReceipt() {
 
       if (
@@ -965,11 +1044,25 @@
             );
 
 
+            /*
+             * Send ONCE.
+             */
             form.submit();
+
+
+            /*
+             * Start the UI fail-safe.
+             *
+             * This timer NEVER resubmits the receipt.
+             */
+            startAcknowledgementTimer();
 
           }
 
           catch (error) {
+
+            clearAcknowledgementTimer();
+
 
             submissionInProgress =
               false;
@@ -991,6 +1084,9 @@
 
       reader.onerror =
         function() {
+
+          clearAcknowledgementTimer();
+
 
           submissionInProgress =
             false;
@@ -1058,12 +1154,6 @@
     }
 
 
-    /*
-     * No network lookup.
-     *
-     * Purchase information renders immediately
-     * from the workbook-generated URL.
-     */
     loadPurchase();
 
   </script>
