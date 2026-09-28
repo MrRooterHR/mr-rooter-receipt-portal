@@ -95,6 +95,13 @@
       margin-bottom: 7px;
     }
 
+    .field-help {
+      margin-top: 6px;
+      color: #667085;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
     input[type="number"],
     input[type="file"] {
       width: 100%;
@@ -217,24 +224,20 @@
           <span id="poDisplay" class="value"></span>
         </div>
 
-
         <div class="detail-row">
           <span class="label">Technician</span>
           <span id="techDisplay" class="value"></span>
         </div>
-
 
         <div class="detail-row">
           <span class="label">Vendor</span>
           <span id="vendorDisplay" class="value"></span>
         </div>
 
-
         <div class="detail-row">
           <span class="label">Category</span>
           <span id="categoryDisplay" class="value"></span>
         </div>
-
 
         <div
           id="jobRow"
@@ -252,11 +255,17 @@
         class="duplicate-section"
       >
 
-        <p class="duplicate-title">
+        <p
+          id="duplicateTitle"
+          class="duplicate-title"
+        >
           Receipt already submitted
         </p>
 
-        <p class="duplicate-text">
+        <p
+          id="duplicateText"
+          class="duplicate-text"
+        >
           A receipt is already on file for this PO.
           Only submit another receipt if an additional
           or replacement receipt is needed.
@@ -281,7 +290,10 @@
 
         <div class="field">
 
-          <label for="amount">
+          <label
+            id="amountLabel"
+            for="amount"
+          >
             Final Amount Spent
           </label>
 
@@ -292,8 +304,17 @@
             step="0.01"
             inputmode="decimal"
             placeholder="0.00"
-            required
           >
+
+          <div
+            id="amountHelp"
+            class="field-help"
+            style="display:none;"
+          >
+            Optional for additional receipts. Leave blank
+            to keep the amount already submitted, or enter
+            the correct amount if it needs to be changed.
+          </div>
 
         </div>
 
@@ -344,11 +365,6 @@
 
   </div>
 
-
-  <!--
-    Receipt submission continues through
-    the working Apps Script hidden POST/iframe.
-  -->
 
   <form
     id="receiptForm"
@@ -415,14 +431,6 @@
       'https://script.google.com/macros/s/AKfycbwPTH0fqVAeAUJWRpv70UhpagdYhx2ZKIXE_UbZXB2GVcmfjgkxUMNN7qjGUH328C0/exec';
 
 
-    /*
-     * If Apps Script successfully reports back,
-     * success appears immediately.
-     *
-     * If the browser blocks the iframe acknowledgement,
-     * the technician is released after this delay instead
-     * of seeing an endless "Finishing submission" message.
-     */
     const ACKNOWLEDGEMENT_TIMEOUT_MS =
       8000;
 
@@ -436,26 +444,20 @@
     const bookId =
       params.get('book') || '';
 
-
     const po =
       params.get('po') || '';
-
 
     const technician =
       params.get('tech') || '';
 
-
     const vendor =
       params.get('vendor') || '';
-
 
     const category =
       params.get('cat') || '';
 
-
     const jobNumber =
       params.get('job') || '';
-
 
     const receiptFlag =
       params.get('receipt') || '0';
@@ -464,10 +466,11 @@
     let existingReceipt =
       receiptFlag === '1';
 
+    let additionalReceiptMode =
+      existingReceipt;
 
     let submissionInProgress =
       false;
-
 
     let acknowledgementTimer =
       null;
@@ -478,49 +481,67 @@
         'status'
       );
 
-
     const details =
       document.getElementById(
         'details'
       );
-
 
     const formSection =
       document.getElementById(
         'formSection'
       );
 
-
     const duplicateSection =
       document.getElementById(
         'duplicateSection'
       );
 
+    const duplicateTitle =
+      document.getElementById(
+        'duplicateTitle'
+      );
+
+    const duplicateText =
+      document.getElementById(
+        'duplicateText'
+      );
 
     const cancelButton =
       document.getElementById(
         'cancelButton'
       );
 
-
     const message =
       document.getElementById(
         'message'
       );
-
 
     const submitButton =
       document.getElementById(
         'submitButton'
       );
 
+    const amountInput =
+      document.getElementById(
+        'amount'
+      );
 
-    /*
-     * Purchase details are rendered entirely
-     * from the workbook-generated URL.
-     *
-     * No Google lookup occurs when the page opens.
-     */
+    const receiptInput =
+      document.getElementById(
+        'receipt'
+      );
+
+    const amountLabel =
+      document.getElementById(
+        'amountLabel'
+      );
+
+    const amountHelp =
+      document.getElementById(
+        'amountHelp'
+      );
+
+
     function loadPurchase() {
 
       if (
@@ -593,34 +614,112 @@
         existingReceipt
       ) {
 
+        showReceiptSubmittedState(
+          false
+        );
+      }
+
+      else {
+
+        additionalReceiptMode =
+          false;
+
+        configureAmountField();
+
         statusBox.textContent =
-          'Purchase found. A receipt has already been submitted for this PO.';
-
-
-        formSection.style.display =
-          'none';
-
+          'Purchase found. Ready for receipt submission.';
 
         duplicateSection.style.display =
+          'none';
+
+        formSection.style.display =
           'block';
 
+        cancelButton.style.display =
+          'none';
+      }
+    }
+
+
+    function configureAmountField() {
+
+      if (
+        additionalReceiptMode
+      ) {
+
+        amountLabel.textContent =
+          'Final Amount Spent (Optional)';
+
+        amountHelp.style.display =
+          'block';
+      }
+
+      else {
+
+        amountLabel.textContent =
+          'Final Amount Spent';
+
+        amountHelp.style.display =
+          'none';
+      }
+    }
+
+
+    function showReceiptSubmittedState(
+      justSubmitted
+    ) {
+
+      existingReceipt =
+        true;
+
+      additionalReceiptMode =
+        true;
+
+      configureAmountField();
+
+      formSection.style.display =
+        'none';
+
+      cancelButton.style.display =
+        'none';
+
+      duplicateSection.style.display =
+        'block';
+
+      resetSubmitButton();
+
+      amountInput.value =
+        '';
+
+      receiptInput.value =
+        '';
+
+
+      if (
+        justSubmitted
+      ) {
+
+        statusBox.textContent =
+          'Receipt received.';
+
+        duplicateTitle.textContent =
+          'Receipt received';
+
+        duplicateText.textContent =
+          'Your receipt was submitted successfully. If the receipt requires another photo, you can submit another receipt below.';
       }
 
       else {
 
         statusBox.textContent =
-          'Purchase found. Ready for receipt submission.';
+          'Purchase found. A receipt has already been submitted for this PO.';
 
+        duplicateTitle.textContent =
+          'Receipt already submitted';
 
-        duplicateSection.style.display =
-          'none';
-
-
-        formSection.style.display =
-          'block';
-
+        duplicateText.textContent =
+          'A receipt is already on file for this PO. Only submit another receipt if an additional or replacement receipt is needed.';
       }
-
     }
 
 
@@ -628,29 +727,32 @@
 
       hideMessage();
 
+      additionalReceiptMode =
+        true;
+
+      configureAmountField();
 
       duplicateSection.style.display =
         'none';
 
-
       formSection.style.display =
         'block';
-
 
       cancelButton.style.display =
         'block';
 
+      amountInput.value =
+        '';
+
+      receiptInput.value =
+        '';
+
+      resetSubmitButton();
 
       statusBox.textContent =
         'Additional receipt submission.';
 
-
-      document
-        .getElementById(
-          'amount'
-        )
-        .focus();
-
+      amountInput.focus();
     }
 
 
@@ -663,50 +765,20 @@
         return;
       }
 
+      amountInput.value =
+        '';
 
-      document
-        .getElementById(
-          'amount'
-        )
-        .value =
-          '';
-
-
-      document
-        .getElementById(
-          'receipt'
-        )
-        .value =
-          '';
-
-
-      formSection.style.display =
-        'none';
-
-
-      cancelButton.style.display =
-        'none';
-
-
-      duplicateSection.style.display =
-        'block';
-
-
-      statusBox.textContent =
-        'Purchase found. A receipt has already been submitted for this PO.';
-
+      receiptInput.value =
+        '';
 
       hideMessage();
 
+      showReceiptSubmittedState(
+        false
+      );
     }
 
 
-    /*
-     * Start the fail-safe AFTER the POST has
-     * actually been sent.
-     *
-     * This does not submit anything again.
-     */
     function startAcknowledgementTimer() {
 
       clearAcknowledgementTimer();
@@ -725,16 +797,24 @@
 
 
             /*
-             * We deliberately do NOT retry here.
+             * DO NOT retry.
              *
-             * At this point the receipt has already
-             * been sent to Apps Script. Retrying could
-             * create a duplicate receipt.
+             * The POST has already been sent.
+             * Retrying could create a duplicate.
              */
             submissionInProgress =
               false;
 
 
+            /*
+             * Android may block the iframe acknowledgement
+             * even though Apps Script successfully received
+             * and processed the receipt.
+             *
+             * Instead of trapping the technician or telling
+             * them to close the page, return them to the
+             * additional-receipt option.
+             */
             statusBox.textContent =
               'Receipt sent.';
 
@@ -743,23 +823,52 @@
               'none';
 
 
-            duplicateSection.style.display =
-              'none';
-
-
             cancelButton.style.display =
               'none';
 
 
+            duplicateSection.style.display =
+              'block';
+
+
+            existingReceipt =
+              true;
+
+
+            additionalReceiptMode =
+              true;
+
+
+            configureAmountField();
+
+
+            duplicateTitle.textContent =
+              'Receipt sent';
+
+
+            duplicateText.textContent =
+              'Your receipt was sent. If the receipt requires another photo, you can submit another receipt below.';
+
+
+            amountInput.value =
+              '';
+
+
+            receiptInput.value =
+              '';
+
+
+            resetSubmitButton();
+
+
             showMessage(
-              'Receipt sent. You may close this page.',
+              'Receipt sent.',
               true
             );
 
           },
           ACKNOWLEDGEMENT_TIMEOUT_MS
         );
-
     }
 
 
@@ -773,21 +882,12 @@
           acknowledgementTimer
         );
 
-
         acknowledgementTimer =
           null;
-
       }
-
     }
 
 
-    /*
-     * Listen for the REAL Apps Script acknowledgement.
-     *
-     * Browsers that allow it will receive confirmed
-     * success or the actual backend error.
-     */
     window.addEventListener(
       'message',
       function(event) {
@@ -830,31 +930,16 @@
           result.success
         ) {
 
-          existingReceipt =
-            true;
+          hideMessage();
 
-
-          statusBox.textContent =
-            'Receipt received.';
-
-
-          formSection.style.display =
-            'none';
-
-
-          duplicateSection.style.display =
-            'none';
-
-
-          cancelButton.style.display =
-            'none';
-
+          showReceiptSubmittedState(
+            true
+          );
 
           showMessage(
             'Receipt submitted successfully.',
             true
           );
-
 
           return;
         }
@@ -870,7 +955,6 @@
             : 'The receipt could not be submitted. Please contact your manager before submitting it again.',
           false
         );
-
       }
     );
 
@@ -889,29 +973,49 @@
 
 
       const amount =
-        document
-          .getElementById(
-            'amount'
-          )
+        amountInput
           .value
           .trim();
 
 
-      const fileInput =
-        document
-          .getElementById(
-            'receipt'
-          );
-
-
       const file =
-        fileInput.files[0];
+        receiptInput.files[0];
 
 
-      if (!amount) {
+      /*
+       * Amount is required ONLY for the
+       * first receipt.
+       */
+      if (
+        !additionalReceiptMode &&
+        !amount
+      ) {
 
         showMessage(
           'Enter the final amount spent.',
+          false
+        );
+
+        return;
+      }
+
+
+      /*
+       * If an amount IS entered, make sure
+       * it is a valid positive number.
+       */
+      if (
+        amount &&
+        (
+          !Number.isFinite(
+            Number(amount)
+          ) ||
+          Number(amount) <= 0
+        )
+      ) {
+
+        showMessage(
+          'Enter a valid final amount spent.',
           false
         );
 
@@ -1056,7 +1160,6 @@
              * This timer NEVER resubmits the receipt.
              */
             startAcknowledgementTimer();
-
           }
 
           catch (error) {
@@ -1076,9 +1179,7 @@
               'The receipt could not be prepared.',
               false
             );
-
           }
-
         };
 
 
@@ -1099,14 +1200,12 @@
             'The receipt file could not be read.',
             false
           );
-
         };
 
 
       reader.readAsDataURL(
         file
       );
-
     }
 
 
@@ -1117,8 +1216,9 @@
 
 
       submitButton.textContent =
-        'Submit Receipt';
-
+        additionalReceiptMode
+          ? 'Submit Additional Receipt'
+          : 'Submit Receipt';
     }
 
 
@@ -1142,7 +1242,6 @@
 
       message.style.display =
         'block';
-
     }
 
 
@@ -1150,7 +1249,6 @@
 
       message.style.display =
         'none';
-
     }
 
 
